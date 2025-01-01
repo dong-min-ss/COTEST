@@ -1,0 +1,47 @@
+#include<iostream>
+#include<vector>
+#include<deque>
+#include<cstring>
+#include<algorithm>
+#include<cmath>
+using namespace std;
+
+typedef long long ll;
+
+ll n, m, a[300001], ret = 987654321;
+
+bool check(ll mid) {
+    ll num = 0;
+    for (int i = 0; i < m; i++) {
+        num += a[i] / mid;
+        if (a[i] % mid) num++; // 남는게 있으면 +1
+    }
+    return n >= num; // 인원수보다 많아야 맞는 조건
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    cin >> n >> m;
+    ll left = 1, right = 0;
+    for (int i = 0; i < m; i++) {
+        cin >> a[i];
+        right = max(right, a[i]); // 오른쪽 갱신
+    }
+
+    while (left <= right) {
+        ll mid = (left + right) / 2;
+        if (check(mid)) {
+            ret = min(ret, mid); // 최소값 갱신
+            right = mid - 1;
+        }
+        else {
+            left = mid + 1;
+        }
+    }
+    cout << ret;
+
+    return 0;
+}
