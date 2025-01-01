@@ -9,20 +9,17 @@ using namespace std;
 int a[100001], psum[100001], n, m, ret = 987654321;
 
 bool check(int mid) {
-    int cnt = 0, start = 0;
-    while (true) {
-        for (int i = start; i <= n; i++) {
-            if (psum[i] - psum[start] > mid) {
-                start = i - 1;
-                cnt++;
-                break;
-            }
-            if (i == n) {
-                cnt++;
-                return cnt <= m;
-            }
+    int cnt = 1, sum = 0;
+    for (int i = 1; i <= n; i++) {
+        if (sum + a[i] > mid) {
+            cnt++;
+            sum = a[i];
+        }
+        else {
+            sum += a[i];
         }
     }
+    return cnt <= m;
 }
 
 int main() {
