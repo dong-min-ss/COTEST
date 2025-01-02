@@ -1,0 +1,71 @@
+#include<iostream>
+#include<vector>
+#include<map>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+using namespace std;
+
+typedef long long ll;
+
+ll maxHP, curHP, ATK, ret = 999999999999;
+ll n, t, a, h;
+
+struct Room {
+    ll t, a, h;
+};
+vector<Room> v;
+
+bool check(ll mid) {
+    ll knightHP = mid, knightATK = ATK;
+
+    for (int i = 0; i < n; i++) {
+        if (v[i].t == 1) { // 몬스터가 있는 방
+            ll monsterHP = v[i].h, monsterATK = v[i].a;
+            ll knightAttackCount = (monsterHP + knightATK - 1) / knightATK; // 몬스터를 처치하기 위한 공격 횟수
+            ll monsterAttackCount = (knightHP + monsterATK - 1) / monsterATK; // 용사가 버틸 수 있는 공격 횟수
+
+            if (knightAttackCount > monsterAttackCount) {
+                return false; // 용사가 몬스터를 처치하기 전에 사망
+            }
+
+            // 몬스터와의 전투 후 남은 체력
+            knightHP -= (knightAttackCount - 1) * monsterATK;
+        }
+        else { // 포션이 있는 방
+            knightATK += v[i].a;
+            knightHP = min(knightHP + v[i].h, mid); // 포션 먹은 피 or 풀피
+        }
+    }
+    return true; // 기사의 체력이 충분
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    ll left = 1, right = 0;
+
+    cin >> n >> ATK;
+    for (int i = 0; i < n; i++) {
+        cin >> t >> a >> h;
+        if (t == 1) {
+            ll maxDamage = (h + ATK - 1) / ATK * a; // 필요한 공격 횟수 * 몬스터 공격력
+            right += maxDamage;
+        }
+        v.push_back({ t,a,h });
+    }
+
+    while (left <= right) {
+        ll mid = (left + right) / 2;
+        if (check(mid)) {
+            ret = mid;
+            right = mid - 1;
+        }
+        else left = mid + 1;
+    }
+    cout << ret;
+
+    return 0;
+}
