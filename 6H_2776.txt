@@ -1,0 +1,36 @@
+#include<iostream>
+#include<vector>
+#include<map>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+using namespace std;
+
+typedef long long ll;
+int n, num, a, b;
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    cin >> n;
+    while (n > 0) {
+        map<int, int> mp;
+        cin >> a;
+        for (int i = 0; i < a; i++) {
+            cin >> num;
+            mp[num]++;
+        }
+        cin >> b;
+        for (int i = 0; i < b; i++) {
+            cin >> num;
+            if (mp[num] == 0) cout << 0;
+            else cout << 1;
+            cout << "\n";
+        }
+        n--;
+    }
+    
+    return 0;
+}
