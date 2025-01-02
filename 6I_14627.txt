@@ -1,0 +1,50 @@
+#include<iostream>
+#include<vector>
+#include<map>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+using namespace std;
+
+typedef long long ll;
+ll n, pa, chicken, ret = LLONG_MAX;
+vector<ll> v;
+
+bool check(ll mid) {
+    int cnt = 0;
+    for (int i = 0; i < n; i++) {
+        cnt += v[i] / mid;
+    }
+    return cnt >= chicken;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    ll left = 1, right = 0, sum = 0;
+
+    cin >> n >> chicken;
+    for (int i = 0; i < n; i++) {
+        cin >> pa;
+        v.push_back(pa);
+        right = max(pa, right);
+        sum += pa;
+    }
+
+    while (left <= right) {
+        ll mid = (left + right) / 2;
+        if (check(mid)) {
+            ret = min(ret, sum - mid * chicken);
+            left = mid + 1;
+        }
+        else {
+            right = mid - 1;
+        }
+    }
+
+    cout << ret;
+    
+    return 0;
+}
