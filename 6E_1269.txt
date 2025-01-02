@@ -1,0 +1,32 @@
+#include<iostream>
+#include<vector>
+#include<map>
+#include<cstring>
+#include<algorithm>
+#include<cmath>
+using namespace std;
+
+typedef long long ll;
+map <ll, int> mp;
+int a, b, cnt;
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    ll num = 0;
+    cin >> a >> b;
+
+    for (int i = 0; i < a + b; i++) {
+        cin >> num;
+        mp[num]++;
+    }
+    for (auto a : mp) {
+        if (a.second % 2) cnt++;
+    }
+    cout << cnt;
+
+
+    return 0;
+}
