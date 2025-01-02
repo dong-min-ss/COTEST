@@ -1,0 +1,46 @@
+#include<iostream>
+#include<vector>
+#include<deque>
+#include<cstring>
+#include<algorithm>
+#include<cmath>
+using namespace std;
+
+int t, a, b, num;
+vector<int> A, B;
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    cin >> t;
+
+    while (t > 0) {
+        A.clear();
+        B.clear();
+
+        int cnt = 0;
+        cin >> a >> b;
+        for (int i = 0; i < a; i++) {
+            cin >> num;
+            A.push_back(num);
+        }
+        sort(A.begin(), A.end());
+
+        for (int i = 0; i < b; i++) {
+            cin >> num;
+            B.push_back(num);
+        }
+        sort(B.begin(), B.end());
+
+        for (int i = 0; i < a; i++) {
+            auto pos = lower_bound(B.begin(), B.end(), A[i]);
+            cnt += (int)(pos - B.begin());
+        }
+        cout << cnt << "\n";
+        t--;
+    }
+
+    return 0;
+}
