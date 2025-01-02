@@ -51,8 +51,9 @@ int main() {
     for (int i = 0; i < n; i++) {
         cin >> t >> a >> h;
         if (t == 1) {
-            ll maxDamage = (h + ATK - 1) / ATK * a; // 필요한 공격 횟수 * 몬스터 공격력
-            right += maxDamage;
+            ll attacks = h / ATK;
+            if (h % ATK != 0) attacks++;
+            right += attacks * a;
         }
         v.push_back({ t,a,h });
     }
