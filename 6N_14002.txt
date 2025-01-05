@@ -7,48 +7,52 @@
 #include <iomanip>
 using namespace std;
 
-int n, v[1001], cnt[1001], prv[1001], ret, idx;
-vector<int> r;
-
-void go(int idx) {
-    if (idx == -1) return;
-
-    r.push_back(v[idx]);
-    go(prv[idx]);
-    return;
-}
-
 int main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    cout.tie(NULL);
 
-
+    int n;
     cin >> n;
 
-    for(int i = 0; i < n; i++) {
+    vector<int> v(n), cnt(n, 1), prv(n, -1);
+    int idx = -1;
+
+    for (int i = 0; i < n; i++) {
         cin >> v[i];
     }
-    fill(cnt, cnt + 1001, 1);
-    memset(prv, -1, sizeof(prv));
 
+    // LIS 계산
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < i; j++) {
             if (v[j] < v[i] && cnt[i] < cnt[j] + 1) {
                 cnt[i] = cnt[j] + 1;
                 prv[i] = j;
-
-                if (ret < cnt[i]) {
-                    ret = cnt[i];
-                    idx = i;
-                }
             }
         }
     }
-    go(idx);
-    reverse(r.begin(), r.end());
-    cout << r.size() << "\n";
-    for (auto a : r)cout << a << " ";
-    
+
+    // 최장 LIS의 마지막 원소 인덱스 찾기
+    int maxLength = 0;
+    for (int i = 0; i < n; i++) {
+        if (cnt[i] > maxLength) {
+            maxLength = cnt[i];
+            idx = i;
+        }
+    }
+
+    // LIS 역추적
+    vector<int> lis;
+    while (idx != -1) {
+        lis.push_back(v[idx]);
+        idx = prv[idx];
+    }
+    reverse(lis.begin(), lis.end());
+
+    // 결과 출력
+    cout << lis.size() << "\n";  // LIS 길이 출력
+    for (int x : lis) {
+        cout << x << " ";
+    }
+
     return 0;
 }
