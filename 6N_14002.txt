@@ -1,0 +1,54 @@
+#include<iostream>
+#include<vector>
+#include<map>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+#include <iomanip>
+using namespace std;
+
+int n, v[1001], cnt[1001], prv[1001], ret, idx;
+vector<int> r;
+
+void go(int idx) {
+    if (idx == -1) return;
+
+    r.push_back(v[idx]);
+    go(prv[idx]);
+    return;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+
+    cin >> n;
+
+    for(int i = 0; i < n; i++) {
+        cin >> v[i];
+    }
+    fill(cnt, cnt + 1001, 1);
+    memset(prv, -1, sizeof(prv));
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < i; j++) {
+            if (v[j] < v[i] && cnt[i] < cnt[j] + 1) {
+                cnt[i] = cnt[j] + 1;
+                prv[i] = j;
+
+                if (ret < cnt[i]) {
+                    ret = cnt[i];
+                    idx = i;
+                }
+            }
+        }
+    }
+    go(idx);
+    reverse(r.begin(), r.end());
+    cout << r.size() << "\n";
+    for (auto a : r)cout << a << " ";
+    
+    return 0;
+}
