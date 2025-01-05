@@ -1,0 +1,41 @@
+#include<iostream>
+#include<vector>
+#include<map>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+#include <iomanip>
+using namespace std;
+
+double solve(vector<double> v) {
+    int n = v.size();
+    double _max = 0;
+
+    for (int i = 0; i < n; i++) {
+        double curr = 1.0;
+        for (int j = i; j < n; j++) {
+            curr *= v[j];
+            _max = max(_max, curr);
+        }
+    }
+    return _max;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    int n;
+    cin >> n;
+
+    vector<double> v(n);
+    for (int i = 0; i < n; i++) {
+        cin >> v[i];
+    }
+
+    double ret = solve(v);
+    cout << fixed << setprecision(3) << ret;
+    
+    return 0;
+}
