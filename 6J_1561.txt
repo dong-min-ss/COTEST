@@ -1,0 +1,74 @@
+#include<iostream>
+#include<vector>
+#include<map>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+#include<iomanip>
+using namespace std;
+
+typedef long long ll;
+
+ll n, m, t, prv;
+vector<ll> v;
+
+bool check(ll mid) {
+    ll cnt = 0;
+
+    for (int i = 0; i < m; i++) {
+        cnt += mid / v[i];
+        cnt++;
+    }
+
+    return cnt >= n;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    cin >> n >> m;
+    for (int i = 0; i < m; i++) {
+        cin >> t;
+        v.push_back(t);
+    }
+
+    if (n <= m) { // 인원 수보다 놀이기구 수가 많을 때
+        cout << n;
+        return 0;
+    }
+    
+    ll left = 0, right = ll(30) * 2000000000; // 최악이 경우는 모든 아이가 30분
+    ll result = 0;  // 모든 아이들을 태울 수 있는 시간
+    while (left <= right) {
+        ll mid = (left + right) / 2;
+        if (check(mid)) {
+            result = mid;
+            right = mid - 1;
+        }
+        else {
+            left = mid + 1;
+        }
+    }
+
+    ll total = 0; // 1초 전 시간까지 몇명을 태웠는지
+    for (int i = 0; i < m; i++) {
+        total += (result - 1) / v[i];
+        total++;
+    }
+    
+    ll LastChild = 0;
+    ll ret = n - total; // 남은 아이들
+    for (int i = 0; i < m; i++) {
+        if (result % v[i] == 0) ret--;
+        if (ret == 0) {
+            LastChild = i + 1;
+            break;
+        }
+    }
+
+    cout << LastChild;
+
+    return 0;
+}
