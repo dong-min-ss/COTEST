@@ -4,7 +4,6 @@
 #include<cstring>
 #include<algorithm>
 #include<climits>
-#include <iomanip>
 using namespace std;
 
 int n, LIS[1001], len, num, cnt[1001];
