@@ -1,0 +1,44 @@
+#include<iostream>
+#include<vector>
+#include<stack>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+#include<iomanip>
+using namespace std;
+typedef long long ll;
+
+ll n, dp[64][32][32];
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    while (true) {
+        cin >> n;
+        if (n == 0) break;
+
+        memset(dp, 0, sizeof(dp));
+        dp[0][0][n] = 1;
+
+        for (int i = 0; i < 2 * n; i++) {
+            for (int half = 0; half <= n; half++) {
+                for (int whole = 0; whole <= n; whole++) {
+                    if (dp[i][half][whole] == 0) continue;
+
+                    if (half > 0) { // 반 알을 먹는 경우
+                        dp[i + 1][half - 1][whole] += dp[i][half][whole];
+                    }
+                    
+                    if (whole > 0) { // 한 알을 쪼개 먹는 경우
+                        dp[i + 1][half + 1][whole - 1] += dp[i][half][whole];
+                    }
+                }
+            }
+        }
+        cout << dp[2 * n][0][0] << "\n";
+    }
+
+    return 0;
+}
