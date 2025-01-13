@@ -1,0 +1,75 @@
+#include<iostream>
+#include<vector>
+#include<map>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+#include<iomanip>
+using namespace std;
+typedef long long ll;
+
+int ret = 101, a[11][11];
+map<int, int> mp;
+
+bool check(int y, int x, int cnt) {
+    if (y + cnt > 10 || x + cnt > 10) return false; // 경계를 벗어남
+    for (int i = y; i < y + cnt; i++) {
+        for (int j = x; j < x + cnt; j++) {
+            if (a[i][j] == 0) return false; // 색종이를 붙이지 않음
+        }
+    }
+    return true;
+}
+
+void draw(int y, int x, int cnt, int value) { // 색종이를 붙이거나 뗌
+    for (int i = y; i < y + cnt; i++) {
+        for (int j = x; j < x + cnt; j++) {
+            a[i][j] = value;
+        }
+    }
+}
+
+void DFS(int y, int x, int cnt) {
+    if (cnt >= ret) return;
+
+    if (x == 10) { // 오른쪽 가장자리 도착
+        DFS(y + 1, 0, cnt);
+        return;
+    }
+    if (y == 10) { // 10 * 10 다 검사한 뒤
+        ret = min(ret, cnt);
+        return;
+    }
+    if (a[y][x] == 0) {
+        DFS(y, x + 1, cnt);
+        return;
+    }
+    
+    for (int len = 5; len >= 1; len--) { // 큰 색종이부터 붙인다.
+        if (mp[len] == 5) continue; // 이미 5장을 모두 사용한 경우
+        if (check(y, x, len)) {
+            mp[len]++; // 색종이 갯수 증가
+            draw(y, x, len, 0); // 색종이 붙임
+
+            DFS(y, x + len, cnt + 1);
+
+            draw(y, x, len, 1); // 색종이 뗌
+            mp[len]--; // 색종이 갯수 복원
+        }
+    }
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    for (int i = 0; i < 10; i++)
+        for (int j = 0; j < 10; j++)
+            cin >> a[i][j];
+
+    DFS(0, 0, 0);
+    if (ret == 101) cout << -1;
+    else cout << ret;
+
+    return 0;
+}
