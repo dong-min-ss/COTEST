@@ -1,0 +1,61 @@
+#include<iostream>
+#include<vector>
+#include<map>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+#include<string>
+using namespace std;
+typedef long long ll;
+
+int n, m;
+string dp[101];
+string max_str = "111111111111111111111111111111111111111111111111111111111111";
+int match[] = { 6,2,5,5,4,5,6,3,7,6 }; // 0,1,2,3,..을 만드는데 필요한 성냥의 갯수
+
+string compare(string a, string b) {
+    if (a.size() == b.size()) return (a < b ? a : b);
+    if (a.size() < b.size()) return a;
+    else return b;
+}
+
+string findMax(int here) {
+    string ret = "";
+    if (here % 2 == 1) {
+        ret += "7";
+        here -= 3;
+    }
+    while (here > 0) {
+        ret += "1";
+        here -= 2;
+    }
+    return ret;
+}
+
+string findMin(int here){
+    if (here == 0) return "";
+    string& ret = dp[here];
+    if (ret != max_str) return ret;
+    for (int i = 0; i <= 9; i++) {
+        if (here < match[i]) continue; // 성냥이 모자람
+        if (here == m && i == 0) continue; // 맨앞에 0이 올 수 없음
+        ret = compare(ret, to_string(i) + findMin(here - match[i]));
+    }
+    return ret;
+}
+
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    cin >> n;
+    while (n--) {
+        cin >> m;
+        fill(dp, dp + 101, max_str);
+        cout << findMin(m) << " " << findMax(m) << "\n";
+    }
+    
+
+    return 0;
+}
