@@ -1,0 +1,51 @@
+#include<iostream>
+#include<vector>
+#include<map>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+#include<string>
+using namespace std;
+typedef long long ll;
+
+const int INF = 987654321;
+int n, dp[5][5][100001], a[100001], idx, mv[5][5];
+
+int go(int left, int right, int here) {
+    if (here == idx) return 0;
+    int& ret = dp[left][right][here];
+    if (ret != INF) return ret;
+
+    int next = a[here];
+
+    ret = min(ret, go(next, right, here + 1) + mv[left][next]); // 왼발이 움직이거나
+    ret = min(ret, go(left, next, here + 1) + mv[right][next]); // 오른발이 움직이거나
+    
+    return ret;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    for (int i = 0; i < 5; i++)
+        for (int j = 0; j < 5; j++)
+            fill(dp[i][j], dp[i][j] + 100001, INF);
+
+    mv[1][1] = mv[2][2] = mv[3][3] = mv[4][4] = 1;
+    mv[0][1] = mv[0][2] = mv[0][3] = mv[0][4] = 2;
+    mv[1][2] = mv[2][1] = mv[2][3] = mv[3][2] = mv[3][4] = mv[4][3] = mv[4][1] = mv[1][4] = 3;
+    mv[1][3] = mv[3][1] = mv[2][4] = mv[4][2] = 4;
+
+    while (true) {
+        cin >> n;
+        if (n == 0) break;
+
+        a[idx] = n;
+        idx++;
+    }
+
+    cout << go(0, 0, 0);
+
+    return 0;
+}
