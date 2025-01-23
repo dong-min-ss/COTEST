@@ -1,0 +1,61 @@
+#include<iostream>
+#include<vector>
+#include<map>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+#include<string>
+#include<cmath>
+#include<iomanip>
+using namespace std;
+typedef long long ll;
+
+int Awin, Bwin;
+ll dp[24][24];
+int not_primary[] = { 0,1,4,6,8,9,10,12,14,15,16,18 }; // 19이하의 소수가 아닌 정수
+double aa[20], bb[20];
+
+void calculate_combinations() {
+    // 초기화
+    for (int i = 0; i <= 20; i++) {
+        for (int j = 0; j <= i; j++) {
+            if (j == 0 || j == i) {
+                dp[i][j] = 1; // C(i, 0) = C(i, i) = 1
+            }
+            else {
+                dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j]; // 점화식
+            }
+        }
+    }
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    calculate_combinations();
+    cin >> Awin >> Bwin;
+    
+    double a = Awin / 100.0;
+    double b = Bwin / 100.0;
+
+    for (int i = 0; i <= 18; i++) {
+        aa[i] = dp[18][i] * pow(a, i) * pow(1 - a, 18 - i);
+        bb[i] = dp[18][i] * pow(b, i) * pow(1 - b, 18 - i);
+    }
+
+    double sum = 0;
+
+    // 양 팀 모두 소수가 아닌 수만큼 득점할 확률
+    for (int i = 0; i < 12; i++) {
+        int Ascore = not_primary[i];
+        for (int j = 0; j < 12; j++) {
+            int Bscore = not_primary[j];
+            sum += aa[Ascore] * bb[Bscore];
+        }
+    }
+
+    cout << 1 - sum;
+
+    return 0;
+}
