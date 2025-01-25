@@ -1,0 +1,54 @@
+#include<iostream>
+#include<vector>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+#include<string>
+#include<cmath>
+#include<iomanip>
+using namespace std;
+typedef long long ll;
+
+const int MOD = 1000007;
+int a[51][51], dp[51][51][51][51], n, m, c, y, x;
+
+int go(int dy, int dx, int cnt, int prv) {
+    if (dy > n || dx > m) return 0; // 범위를 벗어난 경우
+    if (dy == n && dx == m) { // 목적지 도착
+        if (cnt == 0 && a[dy][dx] == 0) return 1; // 현위치가 오락실이 아니고 갯수를 만족한 경우
+        if (cnt == 1 && a[dy][dx] > prv) return 1; // 현위치가 오락실이고 갯수가 하나 부족한 경우
+        return 0;
+    }
+
+    int& ret = dp[dy][dx][cnt][prv];
+    if (ret != -1) return ret;
+    ret = 0;
+    if (a[dy][dx] == 0) { // 현위치가 오락실이 아닌 경우
+        ret = (go(dy + 1, dx, cnt, prv) + go(dy, dx + 1, cnt, prv)) % MOD;
+    }
+    else { // 현위치가 오락실인 경우
+        int cur = a[dy][dx];
+        if (cur > prv) { // 올바른 오락실 순서인 경우
+            ret = (go(dy + 1, dx, cnt - 1, cur) + go(dy, dx + 1, cnt - 1, cur)) % MOD;
+        }
+    }
+    return ret;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    cin >> n >> m >> c;
+    for (int i = 1; i <= c; i++) {
+        cin >> y >> x;
+        a[y][x] = i; // 지도에 오락실 순서 표시
+    }
+
+    memset(dp, -1, sizeof(dp));
+    for (int i = 0; i <= c; i++) {
+        cout << go(1, 1, i, 0) << " ";
+    }
+
+    return 0;
+}
