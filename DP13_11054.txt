@@ -1,0 +1,51 @@
+#include<iostream>
+#include<vector>
+#include<cstring>
+#include<map>
+#include<queue>
+#include<algorithm>
+#include<climits>
+#include<string>
+#include<cmath>
+#include<iomanip>
+using namespace std;
+typedef long long ll;
+
+int a[1001], n, lis[1001], lds[1001];
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    fill(lis, lis + 1001, 1);
+    fill(lds, lds + 1001, 1);
+
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+    }
+
+    for (int i = 1; i < n; i++) {
+        for (int j = 0; j < i; j++) {
+            if (a[i] > a[j]) {
+                lis[i] = max(lis[i], lis[j] + 1);
+            }
+        }
+    }
+
+    for (int i = n - 2; i >= 0; i--) {
+        for (int j = n - 1; j > i; j--) {
+            if (a[i] > a[j]) {
+                lds[i] = max(lds[i], lds[j] + 1);
+            }
+        }
+    }
+
+    int _max = 0;
+    for (int i = 0; i < n; i++)
+        _max = max(_max, lis[i] + lds[i] - 1);
+
+    cout << _max;
+
+    return 0;
+}
