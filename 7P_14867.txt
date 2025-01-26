@@ -1,0 +1,52 @@
+#include<iostream>
+#include<vector>
+#include<cstring>
+#include<map>
+#include<queue>
+#include<algorithm>
+#include<climits>
+#include<string>
+#include<cmath>
+#include<iomanip>
+using namespace std;
+typedef long long ll;
+
+int a, b, c, d;
+map<pair<int, int>, int>m;
+queue<pair<int, int>>q;
+
+void enqueue(int x, int y, int d) {
+    if (m[{x, y}]) return; // 이미 방문
+    m[{x, y}] = d + 1;
+    q.push({ x,y });
+}
+
+int BFS(int x, int y) {
+    m[{x, y}] = 1; // visited[x][y] = 1
+    q.push({ x,y });
+    while (q.size()) {
+        x = q.front().first; // A에 남은 물의 양
+        y = q.front().second; // B에 남은 물의 양
+        q.pop();
+
+        enqueue(a, y, m[{x, y}]); // A통 채우기
+        enqueue(x, b, m[{x, y}]); // B통 채우기
+        enqueue(0, y, m[{x, y}]); // A통 비우기
+        enqueue(x, 0, m[{x, y}]); // B통 비우기
+        enqueue(min(x + y, a), max(0, x + y - a), m[{x, y}]); // B -> A
+        enqueue(max(0, x + y - b), min(x + y, b), m[{x, y}]); // A -> B
+    }
+    if (m[{c, d}]) return m[{c, d}] - 1;
+    else return -1;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    cin >> a >> b >> c >> d;
+
+    cout << BFS(0, 0);
+
+    return 0;
+}
