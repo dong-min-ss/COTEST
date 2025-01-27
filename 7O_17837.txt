@@ -1,0 +1,115 @@
+#include<iostream>
+#include<vector>
+#include<map>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+#include<string>
+#include<cmath>
+#include<iomanip>
+using namespace std;
+typedef long long ll;
+
+const int dy[] = { 0,0,0,-1,1 };
+const int dx[] = { 0,1,-1,0,0 };
+
+int a[13][13], n, k;
+vector<int> v[13][13];
+struct horse
+{
+    int Ypos, Xpos, direction;
+};
+map<int, horse> mp; // 각 말의 상태 저장
+
+int change_direction(int dir) {
+    if (dir == 1) return 2;
+    else if (dir == 2) return 1;
+    else if (dir == 3) return 4;
+    return 3;
+}
+
+bool check() {
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+            if (v[i][j].size() >= 4)
+                return true;
+        }
+    }
+    return false;
+}
+
+void move_horse(int num) {
+    int y = mp[num].Ypos;
+    int x = mp[num].Xpos;
+    int d = mp[num].direction;
+
+    bool start = false;
+    vector<int> tmp;
+    for (int h : v[y][x]) { // 이동할 말들 추출
+        if (start) {
+            tmp.push_back(h);
+        }
+        if (h == num) {
+            tmp.push_back(h);
+            start = true;
+        }
+    }
+    v[y][x].resize(v[y][x].size() - tmp.size()); // 기존의 칸에서 말 제거
+
+    int ny = y + dy[d];
+    int nx = x + dx[d];
+
+    if (ny < 1 || nx < 1 || ny > n || nx > n || a[ny][nx] == 2) { // 경계를 벗어나거나 파란색
+        int new_direction = change_direction(d);
+        mp[num].direction = new_direction;
+
+        ny = y + dy[new_direction];
+        nx = x + dx[new_direction];
+        if (ny < 1 || nx < 1 || ny > n || nx > n || a[ny][nx] == 2) { // 다시 경계를 벗어나거나 파란색
+            for (int t : tmp) v[y][x].push_back(t); // 다시 제자리로
+            return;
+        }
+    }
+
+    if (a[ny][nx] == 1) reverse(tmp.begin(), tmp.end()); // 빨간색: 역순 이동
+
+    for (int t : tmp) {
+        v[ny][nx].push_back(t);
+        mp[t].Ypos = ny;
+        mp[t].Xpos = nx;
+    }
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    cin >> n >> k;
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+            cin >> a[i][j];
+        }
+    }
+    for (int i = 1; i <= k; i++) {
+        int y, x, d;
+        cin >> y >> x >> d;
+        mp[i] = { y,x,d }; // 말의 위치, 방향 저장
+        v[y][x].push_back(i);
+    }
+
+    int result = -1;
+    for (int turn = 1; turn <= 1000; turn++) {
+        for (int i = 1; i <= k; i++) {
+            move_horse(i);
+            if (check()) {
+                result = turn;
+                break;
+            }
+        }
+        if (result != -1) break;
+    }
+
+    cout << result;
+
+    return 0;
+}
