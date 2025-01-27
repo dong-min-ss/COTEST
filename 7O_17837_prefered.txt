@@ -1,0 +1,104 @@
+#include <iostream>
+#include <vector>
+#include <map>
+#include <algorithm>
+using namespace std;
+
+const int dy[] = { 0, 0, 0, -1, 1 }; // 방향: 없음, 오른쪽, 왼쪽, 위, 아래
+const int dx[] = { 0, 1, -1, 0, 0 };
+
+int a[13][13], n, k; // 보드와 크기
+vector<int> v[13][13]; // 각 칸에 있는 말들
+struct Horse {
+    int y, x, dir; // 말의 위치와 방향
+};
+map<int, Horse> mp; // 각 말의 상태 저장
+
+int change_direction(int dir) {
+    if (dir == 1) return 2;
+    if (dir == 2) return 1;
+    if (dir == 3) return 4;
+    return 3;
+}
+
+void move_horse(int num) {
+    Horse& h = mp[num];
+    int y = h.y, x = h.x, d = h.dir;
+
+    // 현재 칸과 새 칸을 참조로 가져오기
+    vector<int>& curr = v[y][x];
+    auto it = find(curr.begin(), curr.end(), num);
+    vector<int> tmp(it, curr.end()); // 이동할 말들 추출
+    curr.erase(it, curr.end()); // 기존 칸에서 이동할 말들 제거
+
+    // 다음 칸 계산
+    int ny = y + dy[d];
+    int nx = x + dx[d];
+
+    // 경계를 벗어나거나 파란색 칸일 경우
+    if (ny < 1 || nx < 1 || ny > n || nx > n || a[ny][nx] == 2) {
+        h.dir = change_direction(d); // 방향 반전
+        ny = y + dy[h.dir];
+        nx = x + dx[h.dir];
+
+        // 반전된 방향도 이동 불가하면 제자리 복구
+        if (ny < 1 || nx < 1 || ny > n || nx > n || a[ny][nx] == 2) {
+            curr.insert(curr.end(), tmp.begin(), tmp.end());
+            return;
+        }
+    }
+
+    // 새 칸 처리
+    vector<int>& next = v[ny][nx];
+    if (a[ny][nx] == 1) reverse(tmp.begin(), tmp.end()); // 빨간색 칸일 경우 역순
+
+    // 이동한 말들 상태 업데이트
+    for (int t : tmp) {
+        next.push_back(t);
+        mp[t].y = ny;
+        mp[t].x = nx;
+    }
+}
+
+bool check() {
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+            if (v[i][j].size() >= 4) return true; // 말이 4개 이상 쌓인 경우
+        }
+    }
+    return false;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    cin >> n >> k;
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+            cin >> a[i][j];
+        }
+    }
+
+    for (int i = 1; i <= k; i++) {
+        int y, x, d;
+        cin >> y >> x >> d;
+        mp[i] = { y, x, d };
+        v[y][x].push_back(i); // 초기 말 배치
+    }
+
+    int result = -1;
+    for (int turn = 1; turn <= 1000; turn++) {
+        for (int i = 1; i <= k; i++) {
+            move_horse(i);
+            if (check()) {
+                result = turn;
+                break;
+            }
+        }
+        if (result != -1) break;
+    }
+
+    cout << result << "\n";
+    return 0;
+}
