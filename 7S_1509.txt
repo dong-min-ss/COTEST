@@ -1,0 +1,53 @@
+#include<iostream>
+#include<vector>
+#include<map>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+#include<string>
+#include<cmath>
+#include<iomanip>
+using namespace std;
+typedef long long ll;
+
+const int INF = 987654321;
+string s;
+int dp[2501][2501]; // dp[i][j]는 i번부터 길이가 j인 팰린드롬 // bool 배열
+int dp2[2501]; // dp배열을 기반을 최솟값
+
+int go(int here) {
+    if (here == s.size()) return 0;
+    if (dp2[here] != INF) return dp2[here];
+
+    int& ret = dp2[here];
+    for (int i = 1; here + i <= s.size(); i++) {
+        if (dp[here][i])
+            ret = min(ret, go(here + i) + 1);
+    }
+    return ret;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    cin >> s;
+    for (int i = 0; i < s.size(); i++) // 길이가 1
+        dp[i][1] = 1;
+
+    for (int i = 0; i < s.size() - 1; i++) // 길이가 2
+        if (s[i] == s[i + 1])
+            dp[i][2] = 1;
+
+    for (int len = 3; len <= s.size(); len++) {
+        for (int j = 0; j + len <= s.size(); j++) {
+            if (s[j] == s[j + len - 1] && dp[j + 1][len - 2]) // 시작과 마지막이 같고, 그 전 문자열이 회문
+                dp[j][len] = 1;
+        }
+    }
+
+    fill(dp2, dp2 + 2501, INF);
+    cout << go(0);
+
+    return 0;
+}
