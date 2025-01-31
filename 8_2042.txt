@@ -1,0 +1,59 @@
+#include<iostream>
+#include<vector>
+#include<map>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+#include<string>
+#include<cmath>
+#include<iomanip>
+using namespace std;
+typedef long long ll;
+
+int n, m, k, t1, t2, t3;
+ll t4;
+
+ll sum(vector<ll>& tree, int idx) {
+    ll ret = 0;
+    while (idx > 0) {
+        ret += tree[idx];
+        idx -= idx & -idx;
+    }
+    return ret;
+}
+
+void update(vector<ll>& tree, int idx, ll diff) {
+    while (idx < tree.size()) {
+        tree[idx] += diff;
+        idx += idx & -idx;
+    }
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    cin >> n >> m >> k;
+    vector<ll> a(n + 1);
+    vector<ll> tree(n + 1);
+    for (int i = 1; i <= n; i++) { // 트리는 1부터 시작!
+        cin >> a[i];
+        update(tree, i, a[i]);
+    }
+
+    for (int i = 0; i < m + k; i++) {
+        cin >> t1;
+        if (t1 == 1) { // 배열 요소 변경
+            cin >> t2 >> t4;
+            ll diff = t4 - a[t2];
+            a[t2] = t4;
+            update(tree, t2, diff);
+        }
+        else { // 구간 합 출력
+            cin >> t2 >> t3;
+            cout << sum(tree, t3) - sum(tree, t2 - 1) << "\n";
+        }
+    }
+
+    return 0;
+}
