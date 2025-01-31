@@ -1,0 +1,47 @@
+#include<iostream>
+#include<vector>
+#include<map>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+#include<string>
+#include<cmath>
+#include<iomanip>
+using namespace std;
+typedef long long ll;
+
+ll n, c, a[32], ret;
+vector<int> front, back;
+
+void go(int here, int end, vector<int>& v, int sum) {
+    if (sum > c) return; // 목표치를 넘어섬
+    if (here > end) {
+        v.push_back(sum); // 마지막 보석 처리
+        return;
+    }
+    go(here + 1, end, v, sum + a[here]); // 현재 보석을 넣거나
+    go(here + 1, end, v, sum); // 안 넣거나
+    return;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    cin >> n >> c;
+    for (int i = 0; i < n; i++)
+        cin >> a[i];
+
+    go(0, n / 2 - 1, front, 0); // 앞부분
+    go(n / 2, n - 1, back, 0); // 뒷부분
+    sort(front.begin(), front.end());
+    sort(back.begin(), back.end());
+    for (int i : front) {
+        if (c - i >= 0) // 뒷부분에서 가능한 보석까지의 인덱스를 합산
+            ret += ((int)(upper_bound(back.begin(), back.end(), c - i) - back.begin()));
+    }
+
+    cout << ret;
+
+    return 0;
+}
