@@ -1,0 +1,55 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+#include<string>
+#include<cmath>
+#include<iomanip>
+using namespace std;
+typedef long long ll;
+
+int V, E, K, u, v, w;
+vector<pair<int, int>> adj[20001];
+int dist[20001];
+const int INF = 987654321;
+priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq; // 작은 가중치가 맨 위로
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    cin >> V >> E >> K;
+    fill(dist, dist + 2001, INF);
+    for (int i = 0; i < E; i++) {
+        cin >> u >> v >> w; // 시작점, 도착점, 가중치
+        adj[u].push_back({ w,v }); // 인접 리스트 // 가중치를 first로
+    }
+
+    pq.push(make_pair(0, K)); // 시작점은 가중치가 0
+    dist[K] = 0;
+
+    while (pq.size()) {
+        int here = pq.top().second; // 가장 작은 가중치를 가지는 정점
+        int here_dist = pq.top().first; // 현재 가장 작은 가중치
+        pq.pop();
+        if (dist[here] < here_dist) continue; // 이미 더 짧은 경로가 있으면 무시 // 이미 갱신
+
+        for (auto a : adj[here]) {
+            int there = a.second; // 연결된 정점
+            int there_dist = a.first; // there까지의 가중치
+            if (dist[there] > dist[here] + there_dist) { // 갱신이 가능하면
+                dist[there] = dist[here] + there_dist;
+                pq.push({ dist[there], there }); // 정점 추가
+            }
+        }
+    }
+
+    for (int i = 1; i <= V; i++) {
+        if (dist[i] == INF) cout << "INF\n";
+        else cout << dist[i] << "\n";
+    }
+
+    return 0;
+}
