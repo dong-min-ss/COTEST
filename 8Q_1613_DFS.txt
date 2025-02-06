@@ -1,0 +1,44 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+#include<string>
+#include<cmath>
+#include<iomanip>
+using namespace std;
+typedef long long ll;
+
+const int INF = 987654321;
+int n, k, s, a, b;
+vector<int> adj[401];
+
+bool go(int start, int goal) {
+    for (int next : adj[start]) {
+        if (next == goal) return true;
+        if (go(next, goal)) return true; // 모든 연결된 노드를 탐색
+    }
+    return false;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    cin >> n >> k;
+    for (int i = 0; i < k; i++) {
+        cin >> a >> b;
+        adj[a].push_back(b);
+    }
+
+    cin >> s;
+    for (int i = 0; i < s; i++) {
+        cin >> a >> b;
+        if (go(a, b)) cout << -1 << "\n";
+        else if (go(b, a)) cout << 1 << "\n";
+        else cout << 0 << "\n";
+    }
+
+    return 0;
+}
