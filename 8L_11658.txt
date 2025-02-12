@@ -1,0 +1,70 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+#include<string>
+#include<cmath>
+#include<iomanip>
+using namespace std;
+typedef long long ll;
+
+const int INF = 987654321;
+
+ll n, m, w, x1, y1_, x2, y2, c;
+ll a[1028][1028], tree[1028][1028];
+
+ll PrefixSum(int x, int y) { // (x,1)~(x,y)까지의 합
+    ll ret = 0;
+    while (y > 0) {
+        ret += tree[x][y];
+        y -= y & -y;
+    }
+    return ret;
+}
+
+ll FinalSum(int a, int b, int c) { // (a,b)~(a,c)까지의 합
+    return PrefixSum(a, c) - PrefixSum(a, b - 1);
+}
+
+void update(int x, int y, ll diff) { // (x,1)~(x,y)까지 업데이트
+    while (y <= n) {
+        tree[x][y] += diff;
+        y += y & -y;
+    }
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    cin >> n >> m;
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+            cin >> a[i][j];
+            update(i, j, a[i][j]);
+        }
+    }
+
+    for (int i = 0; i < m; i++) {
+        cin >> w;
+        if (w == 1) {
+            cin >> x1 >> y1_ >> x2 >> y2;
+            
+            ll ret = 0;
+            for (int j = x1; j <= x2; j++) {
+                ret += FinalSum(j, y1_, y2);
+            }
+            cout << ret << "\n";
+        }
+        else {
+            cin >> x1 >> y1_ >> c;
+            ll diff = c - a[x1][y1_];
+            a[x1][y1_] = c;
+            update(x1, y1_, diff);
+        }
+    }
+
+    return 0;
+}
