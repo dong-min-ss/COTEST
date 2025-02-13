@@ -1,0 +1,61 @@
+#include<iostream>
+#include<vector>
+#include<map>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+#include<string>
+#include<cmath>
+#include<iomanip>
+#define y1 no
+using namespace std;
+typedef long long ll;
+
+const int INF = 987654321;
+
+pair<int, int> a[100004];
+int n, x, y, x1, y1, x2, y2;
+map<int, int> mp_x, mp_y;
+
+int change(int num) { // 좌표 이동
+    return (num + 500000);
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        cin >> x >> y;
+        x = change(x);
+        y = change(y);
+        a[i] = { x,y }; // 꼭지점 좌표 저장
+    }
+    a[n] = a[0]; // 시작점과 마지막점 연결
+
+    for (int i = 0; i < n; i++) {
+        x1 = a[i].first;
+        y1 = a[i].second;
+        x2 = a[i + 1].first;
+        y2 = a[i + 1].second;
+        if (x1 != x2) { // x 이동
+            if (x1 > x2) swap(x1, x2);
+            for (int j = x1 + 1; j <= x2; j++)
+                mp_x[j]++;
+        }
+        if (y1 != y2) { // y 이동
+            if (y1 > y2) swap(y1, y2);
+            for (int j = y1 + 1; j <= y2; j++)
+                mp_y[j]++;
+        }
+    }
+
+    int ret = 0;
+    for (auto a : mp_x) ret = max(ret, a.second);
+    for (auto a : mp_y) ret = max(ret, a.second);
+
+    cout << ret;
+
+    return 0;
+}
