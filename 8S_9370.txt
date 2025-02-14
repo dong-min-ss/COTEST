@@ -1,0 +1,73 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+#include<string>
+#include<cmath>
+#include<iomanip>
+#define y1 no
+using namespace std;
+typedef long long ll;
+
+const int INF = 987654320; // 짝수로 초기화
+
+int test, n, m, t, s, g, h, a, b, d, x;
+int dist[2004]; // 정점까지의 거리
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    cin >> test;
+    while (test--) {
+        
+        vector<pair<int, int>> adj[2004];
+        
+        cin >> n >> m >> t >> s >> g >> h;
+        for (int i = 0; i < m; i++) { // 도로 입력
+            cin >> a >> b >> d;
+            d *= 2;
+            if (a == g && b == h) d--;
+            else if (a == h && b == g) d--;
+            // 반드시 지나야 하는 길은 홀수로
+
+            adj[a].push_back({ d,b });
+            adj[b].push_back({ d,a });
+        }
+
+        vector<int> candi;
+        for (int i = 0; i < t; i++) { // 후보 목적지
+            cin >> x;
+            candi.push_back(x);
+        }
+        sort(candi.begin(), candi.end());
+
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;
+        fill(dist, dist + 2004, INF);
+        pq.push({ 0,s }); // 시작점
+        dist[s] = 0;
+        while (!pq.empty()) {
+            int here = pq.top().second;
+            int here_dist = pq.top().first;
+            pq.pop();
+
+            if (dist[here] < here_dist) continue;
+            for (auto there : adj[here]) {
+                int _dist = there.first;
+                int _there = there.second;
+                if (dist[_there] > dist[here] + _dist) {
+                    dist[_there] = dist[here] + _dist;
+                    pq.push({ dist[_there],_there });
+                }
+            }
+        }
+        for (int i = 0; i < t; i++) {
+            if (dist[candi[i]] % 2 == 1) cout << candi[i] << " "; // 최단거리가 홀수여야 g,h를 지난 것
+        }
+        cout << "\n";
+    }
+
+    return 0;
+}
