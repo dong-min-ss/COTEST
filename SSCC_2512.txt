@@ -1,0 +1,56 @@
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<cstring>
+#include<algorithm>
+#include<climits>
+#include<string>
+#include<cmath>
+#include<iomanip>
+typedef long long ll;
+using namespace std;
+
+//const int dy[] = { -1, 0, 1, 0 };
+//const int dx[] = { 0, 1, 0, -1 };
+
+ll n, finance, request;
+vector<ll> v;
+
+bool solve(ll value) {
+    ll sum = 0;
+    for (auto a : v) {
+        sum += min(value, a);
+    }
+    return sum > finance;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        cin >> request;
+        v.push_back(request);
+    }
+    cin >> finance;
+
+    sort(v.begin(), v.end());
+    ll left = 0;
+    ll right = v[n - 1];
+    while (right >= left) {
+        //cout << "L: " << left << " R: " << right << "\n";
+        ll mid = (right + left) / 2;
+        if (solve(mid)) { // 너무 큰 금액
+            right = mid - 1;
+        }
+        else { // 너무 작은 금액
+            left = mid + 1;
+        }
+    }
+
+    cout << right;
+
+    return 0;
+}
