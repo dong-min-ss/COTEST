@@ -1,0 +1,55 @@
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<cstring>
+using namespace std;
+
+const int dy[] = { -1,0,1,0 };
+const int dx[] = { 0,1,0,-1 };
+int test, n, m, k, xpos, ypos, ny, nx, cnt;
+char a[104][104];
+int visited[104][104];
+string s;
+
+void DFS(int y, int x) {
+	visited[y][x] = 1;
+	for (int i = 0; i < 4; i++) {
+		ny = y + dy[i];
+		nx = x + dx[i];
+		if (ny < 0 || nx < 0 || ny >= n || nx >= m)
+			continue;
+		if (a[ny][nx] == '#' && visited[ny][nx] == 0)
+			DFS(ny, nx);
+	}
+	return;
+}
+int main() {
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	cin >> test;
+	for (int i = 0; i < test; i++) {
+		memset(a, 0, sizeof(a));
+		memset(visited, 0, sizeof(visited));
+		cnt = 0;
+
+		cin >> n >> m;
+		for (int i = 0; i < n; i++) {
+			cin >> s;
+			for (int k = 0; k < s.size(); k++) {
+				a[i][k] = s[k];
+			}
+		}
+			
+		for (int b = 0; b < n; b++)
+			for (int c = 0; c < m; c++) {
+				if (a[b][c] == '#' && visited[b][c] == 0) {
+					cnt++;
+					DFS(b, c);
+				}
+			}
+		cout << cnt << "\n";
+	}
+	return 0;
+}
