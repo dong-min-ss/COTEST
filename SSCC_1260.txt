@@ -1,0 +1,66 @@
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<queue>
+#include<cstring>
+using namespace std;
+
+// const int dy[] = { -1,0,1,0 };
+// const int dx[] = { 0,1,0,-1 };
+
+int n, m, v, a, b, visited[1004];
+vector<int> adj[1004];
+
+void DFS(int cur) {
+	cout << cur << " ";
+	visited[cur] = 1;
+
+	for (auto a : adj[cur]) {
+		if (visited[a]) continue;
+		DFS(a);
+	}
+}
+
+void BFS(int cur) {
+	visited[cur] = 1;
+	queue<int> q;
+	q.push(cur);
+
+	while (!q.empty()) {
+		int tmp = q.front();
+		visited[tmp] = 1;
+		cout << tmp << " ";
+		q.pop();
+		
+		for (auto a : adj[tmp]) {
+			if (visited[a]) continue;
+			visited[a] = 1;
+			q.push(a);
+		}
+	}
+}
+int main() {
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	cin >> n >> m >> v;
+	for (int i = 0; i < m; i++) {
+		cin >> a >> b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
+
+	for (int i = 0; i < 1004; i++) {
+		if (adj[i].empty())
+			continue;
+		sort(adj[i].begin(), adj[i].end()); // 작은 번호부터 방문
+	}
+	
+	DFS(v);
+	cout << "\n";
+	memset(visited, 0, sizeof(visited));
+	BFS(v);
+
+	return 0;
+}
