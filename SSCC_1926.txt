@@ -1,0 +1,50 @@
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<cstring>
+using namespace std;
+
+const int dy[] = { -1,0,1,0 };
+const int dx[] = { 0,1,0,-1 };
+int n, m, xpos, ypos, ny, nx, cnt, _max;
+int a[504][504], visited[504][504];
+
+int DFS(int y, int x) {
+	visited[y][x] = 1;
+	int area = 1;
+
+	for (int i = 0; i < 4; i++) {
+		ny = y + dy[i];
+		nx = x + dx[i];
+		if (ny < 0 || nx < 0 || ny >= n || nx >= m)
+			continue;
+		if (a[ny][nx] && visited[ny][nx] == 0)
+			area += DFS(ny, nx);
+	}
+	return area;
+}
+int main() {
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	cin >> n >> m;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			cin >> a[i][j];
+		}
+	}
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			if (a[i][j] && visited[i][j] == 0) {
+				int tmp = DFS(i, j);
+				cnt++;
+				_max = max(_max, tmp);
+			}
+		}
+	}
+	cout << cnt << "\n" << _max;
+
+	return 0;
+}
