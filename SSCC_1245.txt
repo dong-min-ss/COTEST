@@ -1,0 +1,66 @@
+#include <iostream>
+#include <queue>
+using namespace std;
+
+const int dy[] = { -1, -1, -1, 0, 1, 1, 1, 0 };
+const int dx[] = { -1, 0, 1, 1, 1, 0, -1, -1 };
+
+int n, m;
+int a[104][104], visited[104][104];
+
+bool BFS(int y, int x) {
+    queue<pair<int, int>> q;
+    q.push({ y, x });
+    visited[y][x] = 1;
+    bool is_peak = true;
+    int height = a[y][x];
+
+    while (!q.empty()) {
+        auto tmp = q.front();
+        q.pop();
+
+        for (int i = 0; i < 8; i++) {
+            int ny = tmp.first + dy[i];
+            int nx = tmp.second + dx[i];
+
+            if (ny < 0 || nx < 0 || ny >= n || nx >= m)
+                continue;
+
+            if (a[ny][nx] > height)
+                is_peak = false; // 외부에 더 높은 칸 발견
+
+            if (!visited[ny][nx] && a[ny][nx] == height) {
+                visited[ny][nx] = 1;
+                q.push({ ny, nx });
+            }
+        }
+    }
+
+    return is_peak;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    cin >> n >> m;
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < m; j++)
+            cin >> a[i][j];
+
+    int result = 0;
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            if (!visited[i][j] && a[i][j] != 0) { // 안 간 곳 & 높이 0 제외
+                if (BFS(i, j))
+                    result++;
+            }
+        }
+    }
+
+    cout << result;
+
+    return 0;
+}
