@@ -1,0 +1,77 @@
+#include <iostream>
+#include <vector>
+#include <cctype>
+#include <queue>
+#include <algorithm>
+#include <string>
+using namespace std;
+typedef long long ll;
+
+// 6방향
+const int dz[] = { 0,0,-1,0,0,1 };
+const int dy[] = { -1,0,0,1,0,0 };
+const int dx[] = { 0,-1,0,0,1,0 };
+
+struct tomato{
+    int x, y, z;
+};
+queue<tomato> q;
+
+int a[101][101][101];
+int m, n, h, day;
+
+void solve() {
+    while (!q.empty()) {
+        int qs = q.size();
+        while (qs--) { // 하루 단위로 나눔
+            tomato tmp = q.front();
+            q.pop();
+
+            for (int i = 0; i < 6; i++) {
+                int nx = tmp.x + dx[i];
+                int ny = tmp.y + dy[i];
+                int nz = tmp.z + dz[i];
+                if (nx >= m || ny >= n || nz >= h || nx < 0 || ny < 0 || nz < 0) continue; // 경계 넘어감
+                if (a[nx][ny][nz] != 0) continue; // 빈 공간이 아님
+                a[nx][ny][nz] = 1;
+                q.push({ nx,ny,nz });
+            }
+        }
+        day++;
+    }
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    cin >> m >> n >> h;
+
+    for (int i = 0; i < h; i++) {
+        for (int j = 0; j < n; j++) {
+            for (int k = 0; k < m; k++) {
+                int value = 0;
+                cin >> value;
+                a[k][j][i] = value;
+                if (value == 1) {
+                    q.push({ k,j,i }); // 큐에 토마토 좌표 push
+                }
+            }
+        }
+    }
+
+    solve();
+    for (int i = 0; i < h; i++) {
+        for (int j = 0; j < n; j++) {
+            for (int k = 0; k < m; k++) {
+                if (a[k][j][i] == 0) {
+                    cout << -1;
+                    return 0;
+                }
+            }
+        }
+    }
+    
+    cout << day - 1; // 처음부터 다 익었어도 1일로 처리함 -> -1
+}
