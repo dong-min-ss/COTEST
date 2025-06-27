@@ -1,0 +1,68 @@
+#include <iostream>
+#include <vector>
+#include <cctype>
+#include <queue>
+#include <algorithm>
+#include <string>
+using namespace std;
+typedef long long ll;
+
+const int dy[] = { -1,0,1,0 };
+const int dx[] = { 0,-1,0,1 };
+
+int n, k, up, down, zero;
+int Robot[201], Belt[201];
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    cin >> n >> k;
+    up = 0;
+    down = n - 1;
+    zero = 0;
+
+    for (int i = 0; i < 2 * n; i++) {
+        cin >> Belt[i];
+    }
+
+    int step = 0;
+    while (zero < k) {
+        step++;
+
+        // 1) 벨트 & 로봇 회전 (순환 인덱스 적용)
+        for (int i = down; i > up; i--) {
+            Robot[i] = Robot[i - 1];
+        }
+        Robot[up] = 0;
+
+        int tmp = Belt[up + 2 * n - 1];
+        for (int i = up + 2 * n; i > up; i--) {
+            Belt[i] = Belt[i - 1];
+        }
+        Belt[up] = tmp;
+
+        // 내리는 위치 로봇 제거
+        Robot[down] = 0;
+
+        // 2) 로봇 이동
+        for (int i = down - 1; i >= up; i--) {
+            if (Robot[i] && !Robot[i + 1] && Belt[i + 1] > 0) {
+                Robot[i + 1] = 1;
+                Robot[i] = 0;
+                if (--Belt[i + 1] == 0) zero++;
+            }
+        }
+        Robot[down] = 0;
+
+        // 3) 로봇 올리기 (내구도 재확인)
+        if (Belt[up] > 0) {
+            Robot[up] = 1;
+            if (--Belt[up] == 0) zero++;
+        }
+    }
+
+    cout << step;
+    return 0;
+}
