@@ -1,0 +1,57 @@
+#include <iostream>
+#include <vector>
+#include <cctype>
+#include <queue>
+#include <algorithm>
+#include <string>
+using namespace std;
+typedef long long ll;
+
+const int dy[] = { -1,0,1,0 };
+const int dx[] = { 0,-1,0,1 };
+
+int p, m, level, room;
+string name;
+vector<pair<string, int>> v[301];
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    cin >> p >> m;
+    cin >> level >> name; // 처음 사람은 바로 방 만들고 입장
+    v[1].push_back({ name,level });
+    room = 1;
+
+    for (int i = 1; i < p; i++) {
+        bool flag = false;
+        cin >> level >> name;
+        for (int j = 1; j <= room; j++) {
+            if (v[j].size() < m && abs(v[j][0].second - level) <= 10) { // new player 입장
+                v[j].push_back({ name,level });
+                flag = true;
+                break;
+            }
+        }
+        if (!flag) { // new room 생성
+            room++;
+            v[room].push_back({ name,level });
+        }
+    }
+
+    for (int i = 1; i <= room; i++) {
+        sort(v[i].begin(), v[i].end());
+        if (v[i].size() == m) {
+            cout << "Started!\n";
+        }
+        else {
+            cout << "Waiting!\n";
+        }
+        for (auto a : v[i]) {
+            cout << a.second << " " << a.first << "\n";
+        }
+    }
+
+    return 0;
+}
