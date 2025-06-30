@@ -60,8 +60,6 @@ void BFS() {
         }
         
         sort(candidates.begin(), candidates.end());
-        a[Ypos][Xpos] = 0;
-        //cout << "출발점" << a[Ypos][Xpos] << "\n";
         Ypos = candidates.front().first;
         Xpos = candidates.front().second;
 
