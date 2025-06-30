@@ -1,0 +1,99 @@
+#include <iostream>
+#include <vector>
+#include <cctype>
+#include <queue>
+#include <algorithm>
+#include <string>
+using namespace std;
+typedef long long ll;
+
+const int dy[] = { -1,0,1,0 };
+const int dx[] = { 0,-1,0,1 };
+
+int a[21][21], visited[21][21];
+int n, shark, Ypos, Xpos, cnt, feed;
+
+void BFS() {
+    while (true) {
+        memset(visited, -1, sizeof(visited));
+        queue<pair<int, int>> q;
+        visited[Ypos][Xpos] = 0;
+        q.push({ Ypos,Xpos });
+
+        while (!q.empty()) {
+            int y = q.front().first;
+            int x = q.front().second;
+            q.pop();
+
+            for (int i = 0; i < 4; i++) {
+                int ny = y + dy[i];
+                int nx = x + dx[i];
+                if (ny >= n || ny < 0 || nx >= n || nx < 0) continue; // 경계 벗어남
+                if (visited[ny][nx] != -1) continue; // 이미 방문
+                if (a[ny][nx] > shark) continue; // 먹을 수 없는 물고기
+                visited[ny][nx] = visited[y][x] + 1;
+                q.push({ ny,nx });                
+            }
+        }
+
+        vector<pair<int,int>> candidates;
+        int _min = 987654321;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (a[i][j] > 0 && a[i][j] < shark && visited[i][j] != -1) {
+                    int d = visited[i][j];
+                    if (d < _min) {
+                        _min = d;
+                        candidates.clear();
+                        candidates.push_back({ i,j });
+                    }
+                    else if (d == _min) {
+                        candidates.push_back({ i,j });
+                    }
+                }
+            }
+        }
+        
+        if (candidates.empty()) {
+            cout << cnt;
+            break; // 엄마에게 도움 요청
+        }
+        
+        sort(candidates.begin(), candidates.end());
+        a[Ypos][Xpos] = 0;
+        //cout << "출발점" << a[Ypos][Xpos] << "\n";
+        Ypos = candidates.front().first;
+        Xpos = candidates.front().second;
+
+        feed++; // 먹은 물고기 수
+        a[Ypos][Xpos] = 0;
+        cnt += _min;
+        if (feed == shark){ 
+            feed = 0;
+            shark++; // 상어 성장
+        }
+    }
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    shark = 2;
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cin >> a[i][j];
+            if (a[i][j] == 9) {
+                a[i][j] = 0;
+                Ypos = i;
+                Xpos = j;
+            }
+        }
+    }
+
+    BFS();
+
+    return 0;
+}
