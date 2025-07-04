@@ -1,0 +1,57 @@
+#include <iostream>
+#include <vector>
+#include <map>
+#include <algorithm>
+#include <cstring>
+using namespace std;
+
+const int dy[] = { -1,0,0,1 };
+const int dx[] = { 0,-1,1,0 };
+
+int n, m, k[1025][1025], psum[1025][1025];
+struct Node {
+    int Ystart;
+    int Xstart;
+    int Yend;
+    int Xend;
+};
+vector<Node> v;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL); cout.tie(NULL);
+
+    cin >> n >> m;
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+            cin >> k[i][j];
+        }
+    }
+    for (int i = 1; i <= n; i++) { // 구간합
+        for (int j = 1; j <= n; j++) {
+            psum[i][j] = psum[i][j - 1] + k[i][j];
+            //cout << psum[i][j] << " ";
+        }
+        //cout << "\n";
+    }
+    
+    for (int i = 0; i < m; i++) {
+        int a, b, c, d;
+        cin >> a >> b >> c >> d;
+        v.push_back({ a,b,c,d });
+    }
+
+    for (Node node : v) {
+        int sum = 0;
+        if (node.Ystart == node.Yend && node.Xstart == node.Xend) {
+            cout << k[node.Ystart][node.Xstart] << "\n";
+            continue;
+        }
+        for (int i = node.Ystart; i <= node.Yend; i++) {
+            sum += psum[i][node.Xend] - psum[i][node.Xstart - 1];
+        }
+        cout << sum << "\n";
+    }
+
+    return 0;
+}
