@@ -1,0 +1,64 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <cstring>
+using namespace std;
+
+struct Node {
+    int len;
+    int start;
+    int arrive;
+
+    bool operator < (const Node& other) const {
+        return len < other.len;
+    }
+};
+
+int V, E;
+int parent[10001]; // 유니온 파인드용 부모 배열
+
+int find(int x) {
+    if (parent[x] == x) return x; // 자기 자신이 루트인 경우
+    return parent[x] = find(parent[x]); // 루트를 찾아서 경로 압축
+}
+
+void unite(int x, int y) {
+    x = find(x); // x의 루트를 찾고
+    y = find(y); // y의 루트를 찾고
+    if (x != y) parent[y] = x; // 두 그룹이 다르면 합병
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL); cout.tie(NULL);
+
+    cin >> V >> E;
+
+    vector<Node> node(E);
+    for (int i = 0; i < E; i++) {
+        cin >> node[i].start >> node[i].arrive >> node[i].len;
+    }
+
+    // 간선 길이 기준 오름차순 정렬
+    sort(node.begin(), node.end());
+
+    // 부모 초기화 (자기 자신이 루트)
+    for (int i = 1; i <= V; i++) parent[i] = i;
+
+    int res = 0, count = 0;
+    for (const Node& nd : node) {
+        int u = nd.start;
+        int v = nd.arrive;
+
+        if (find(u) == find(v)) continue; // 사이클 발생 -> 스킵
+
+        unite(u, v);
+        res += nd.len;
+        count++;
+
+        if (count == V - 1) break; // MST가 완성되면 종료
+    }
+
+    cout << res << '\n';
+    return 0;
+}
