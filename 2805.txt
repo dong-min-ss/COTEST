@@ -1,0 +1,54 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <cstring>
+#include <queue>
+#include <map>
+using namespace std;
+typedef long long ll;
+
+const int dy[] = { -1,0,1,0 };
+const int dx[] = { 0,1,0,-1 };
+
+ll n, m, tree;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL); cout.tie(NULL);
+
+    vector<ll> v;
+
+    cin >> n >> m;
+    for (int i = 0; i < n; i++) {
+        cin >> tree;
+        v.push_back(tree);
+    }
+
+    sort(v.begin(), v.end());
+    reverse(v.begin(), v.end());
+
+    ll left = 0; // 최소값
+    ll right = v[0];
+    ll res = 0;
+    while (left <= right) {
+        //cout << "left " << left << " / right " << right << "\n";
+        ll sum = 0;
+        ll mid = (left + right) / 2;
+        for (int i = 0; i < n; i++) {
+            if (v[i] < mid) break; // 나무를 얻을 수 없음
+            if (sum >= m) break; // 이미 목표 달성
+            sum += v[i] - mid;
+        }
+        if (sum >= m) {
+            res = mid;
+            left = mid + 1; // 더 높여보고
+        }
+        else {
+            right = mid - 1; // 낮춰보고
+        }
+    }
+    
+    cout << res;
+
+    return 0;
+}
