@@ -1,0 +1,64 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <cstring>
+#include <queue>
+#include <map>
+using namespace std;
+typedef long long ll;
+
+const int dy[] = { -1,0,1,0 };
+const int dx[] = { 0,1,0,-1 };
+const int INF = 987654321;
+
+int n, r, g, b;
+int redDP[3][1001], greenDP[3][1001], blueDP[3][1001];
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL); cout.tie(NULL);
+
+    fill(&redDP[0][0], &redDP[2][1001], INF);
+    fill(&greenDP[0][0], &greenDP[2][1001], INF);
+    fill(&blueDP[0][0], &blueDP[2][1001], INF);
+
+    cin >> n;
+    cin >> r >> g >> b;
+    
+    redDP[0][1] = r;
+    greenDP[1][1] = g;
+    blueDP[2][1] = b;
+
+    for (int i = 2; i <= n; i++) {
+        cin >> r >> g >> b;
+        for (int j = 0; j < 3; j++) {
+            if (j == 0) {
+                redDP[0][i] = min(redDP[1][i - 1], redDP[2][i - 1]) + r;
+                greenDP[0][i] = min(greenDP[1][i - 1], greenDP[2][i - 1]) + r;
+                blueDP[0][i] = min(blueDP[1][i - 1], blueDP[2][i - 1]) + r;
+            }
+            else if (j == 1) {
+                redDP[1][i] = min(redDP[0][i - 1], redDP[2][i - 1]) + g;
+                greenDP[1][i] = min(greenDP[0][i - 1], greenDP[2][i - 1]) + g;
+                blueDP[1][i] = min(blueDP[0][i - 1], blueDP[2][i - 1]) + g;
+            }
+            else {
+                redDP[2][i] = min(redDP[0][i - 1], redDP[1][i - 1]) + b;
+                greenDP[2][i] = min(greenDP[0][i - 1], greenDP[1][i - 1]) + b;
+                blueDP[2][i] = min(blueDP[0][i - 1], blueDP[1][i - 1]) + b;
+            }
+        }
+    }
+
+    int res = INF;
+    res = min(res, redDP[1][n]);
+    res = min(res, redDP[2][n]);
+    res = min(res, greenDP[0][n]);
+    res = min(res, greenDP[2][n]);
+    res = min(res, blueDP[0][n]);
+    res = min(res, blueDP[1][n]);
+
+    cout << res;
+
+    return 0;
+}
