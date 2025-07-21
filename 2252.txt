@@ -1,0 +1,45 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <cstring>
+#include <queue>
+#include <map>
+using namespace std;
+typedef long long ll;
+
+const int dy[] = { -1,0,1,0 };
+const int dx[] = { 0,1,0,-1 };
+
+int n, m, a, b;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL); cout.tie(NULL);
+
+    cin >> n >> m;
+    vector<vector<int>> adj(n + 1);
+    vector<int> cnt(n + 1);
+    
+    for (int i = 0; i < m; i++) {
+        cin >> a >> b; // a가 b앞에
+        adj[a].push_back(b);
+        cnt[b]++;
+    }
+
+    queue<int> q;
+    for (int i = 1; i <= n; i++) {
+        if (cnt[i] == 0) q.push(i);
+    }
+
+    while (!q.empty()) {
+        int cur = q.front();
+        cout << cur << " ";
+        q.pop();
+
+        for (int next : adj[cur]) {
+            if (--cnt[next] == 0) q.push(next);
+        }
+    }
+
+    return 0;
+}
