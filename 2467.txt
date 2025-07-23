@@ -1,0 +1,50 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <cstring>
+#include <queue>
+#include <stack>
+using namespace std;
+typedef long long ll;
+
+const int dy[] = { -1,0,1,0 };
+const int dx[] = { 0,1,0,-1 };
+
+ll n, a[100001];
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL); cout.tie(NULL);
+
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+    }
+
+    ll left = 0;
+    ll right = n - 1;
+    pair<ll, ll> ans;
+    ll prev = 2000000001;
+
+    while (left < right) {
+        //cout << "left: " << a[left] << " / right: " << a[right] << "\n";
+        ll res = a[right] + a[left];
+
+        if (res == 0) {
+            ans = { a[left],a[right] };
+            break;
+        }
+
+        if (abs(res) < prev) {
+            ans = { a[left], a[right] };
+            prev = abs(res);
+        }
+        
+        if (res > 0) right--;
+        else left++;
+    }
+
+    cout << ans.first << " " << ans.second;
+
+    return 0;
+}
