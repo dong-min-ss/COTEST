@@ -1,0 +1,46 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <cstring>
+#include <queue>
+#include <stack>
+using namespace std;
+typedef long long ll;
+
+const int dy[] = { -1,0,1,0 };
+const int dx[] = { 0,1,0,-1 };
+
+int n, m, a, b;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL); cout.tie(NULL);
+
+    
+    cin >> n >> m;
+    vector<vector<int>> adj(n + 1);
+    vector<int> indegree(n + 1);
+
+    for (int i = 0; i < m; i++) {
+        cin >> a >> b;
+        adj[a].push_back(b);
+        indegree[b]++;
+    }
+
+    priority_queue<int, vector<int>, greater<int>> pq; // 내림차순을 만드는 우선순위 큐
+    for (int i = 1; i <= n; i++) {
+        if (indegree[i] == 0) pq.push(i);
+    }
+
+    while (!pq.empty()) {
+        int cur = pq.top();
+        pq.pop();
+        cout << cur << " ";
+
+        for (int next : adj[cur]) {
+            if (--indegree[next] == 0) pq.push(next);
+        }
+    }
+
+    return 0;
+}
