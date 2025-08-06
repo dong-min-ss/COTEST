@@ -1,0 +1,64 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <cstring>
+#include <queue>
+#include <map>
+using namespace std;
+typedef long long ll;
+
+const int dy[] = { -1,0,1,0 };
+const int dx[] = { 0,1,0,-1 };
+
+int visited[100001], node[100001];
+vector<vector<int>> tree(100001);
+
+int go(int cur) {
+    node[cur] = 1;
+    if (tree[cur].size() == 0) return 1;
+
+    for (int next : tree[cur]) {
+        node[cur] += go(next);
+    }
+    
+    return node[cur];
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL); cout.tie(NULL);
+
+    int n, r, q, a, b, c;
+    
+    cin >> n >> r >> q;
+    vector<vector<int>> adj(n + 1);
+    for (int i = 0; i < n - 1; i++) {
+        cin >> a >> b;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+    }
+
+    queue<int> qq;
+    qq.push(r);
+    visited[r] = 1;
+
+    while (!qq.empty()) {
+        int cur = qq.front();
+        qq.pop();
+
+        for (int next : adj[cur]) {
+            if (visited[next]) continue;
+            tree[cur].push_back(next);
+            visited[next] = 1;
+            qq.push(next);
+        }
+    }
+
+    go(r);
+    for (int i = 0; i < q; i++) {
+        cin >> c;
+        cout << node[c] << "\n";
+    }
+
+    return 0;
+}
